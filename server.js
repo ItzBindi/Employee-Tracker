@@ -27,33 +27,37 @@ inquirer.prompt(questions)
         if (response.choice === 'View All Departments') {
             console.log('Viewing all departments');
             db.query('SELECT * FROM department', function (err, results) {
-              console.log(results);
+              console.table(results);
             });
             
         }
         else if (response.choice === 'View All Roles') {
             console.log('Viewing all roles');
             db.query('SELECT * FROM role', function (err, results) {
-              console.log(results);
+              console.table(results);
             });
         }
         else if (response.choice === 'View All Employees') {
             console.log('Viewing all employees');
             db.query('SELECT * FROM employee', function (err, results) {
-              console.log(results);
+              console.table(results);
             });
         }
         else if (response.choice === 'Add a Department') {
             console.log('Adding a department');
+            addDepartment();
         }
         else if (response.choice === 'Add a Role') {
             console.log('Adding a role');
+            addRole();
         }
         else if (response.choice === 'Add an Employee') {
             console.log('Adding an employee');
+            addEmployee();
         }
         else if (response.choice === 'Update an Employee Role') {
             console.log('Updating an employee role');
+
         }
         else if (response.choice === 'Exit') {
             console.log('Exiting');
@@ -64,6 +68,129 @@ inquirer.prompt(questions)
     .catch((err) => {
         console.log(err);
     });
-// Query database
+
+
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the name of the department?',
+            name: 'departmentName',
+        }
+    ])
+    .then((response) => {
+        console.log(response);
+        db.query('INSERT INTO department (name) VALUES (?)',[response.departmentName], function (err, results) {
+            console.log(err);
+            console.table(results);
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+}
+
+function addRole() {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the name of the role?',
+        name: 'roleName',
+      },
+      {
+        type: 'input',
+        message: 'What is the salary of the role?',
+        name: 'roleSalary',
+      },
+      {
+        type: 'input',
+        message: 'What is the department ID of the role?',
+        name: 'roleDepartmentID',
+      },
+    ])
+    .then((response) => {
+      console.log(response);
+      db.query(
+        'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',[response.roleName, response.roleSalary, response.roleDepartmentID],function (err, results) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('Role added successfully.');
+            console.table(results);
+          }
+        }
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: "What is the employee's first name?",
+        name: 'employeeFirstName',
+      },
+      {
+        type: 'input',
+        message: "What is the employee's last name?",
+        name: 'employeeLastName',
+      },
+      {
+        type: 'input',
+        message: "What is the employee's role ID?",
+        name: 'employeeRoleID',
+      },
+      {
+        type: 'input',
+        message: "What is the employee's manager ID?",
+        name: 'employeeManagerID',
+      },
+    ])
+    .then((response) => {
+      console.log(response);
+      db.query(
+        'INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES (?, ?, ?, ?)',[response.employeeFirstName, response.employeeLastName, response.employeeRoleID, response.employeeManagerID,],function (err, results) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('Employee added successfully.');
+            console.table(results);
+          }
+        }
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+    
+  function updateEmployeeRole() {
+    
+  }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Query database
 
 // Default response for any other request (Not Found)
