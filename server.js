@@ -29,6 +29,7 @@ inquirer.prompt(questions)
             console.log('Viewing all departments');
             db.query('SELECT * FROM department', function (err, results) {
               console.table(results);
+              options();
             });
             
         }
@@ -36,29 +37,35 @@ inquirer.prompt(questions)
             console.log('Viewing all roles');
             db.query('SELECT * FROM role', function (err, results) {
               console.table(results);
+              options();
             });
         }
         else if (response.choice === 'View All Employees') {
             console.log('Viewing all employees');
             db.query('SELECT * FROM employee', function (err, results) {
               console.table(results);
+              options();
             });
         }
         else if (response.choice === 'Add a Department') {
             console.log('Adding a department');
             addDepartment();
+            
         }
         else if (response.choice === 'Add a Role') {
             console.log('Adding a role');
             addRole();
+            
         }
         else if (response.choice === 'Add an Employee') {
             console.log('Adding an employee');
             addEmployee();
+            
         }
         else if (response.choice === 'Update an Employee Role') {
             console.log('Updating an employee role');
             updateEmployeeRole();
+            
 
         }
         else if (response.choice === 'Exit') {
@@ -126,7 +133,7 @@ function addRole() {
           } else {
             console.log('Role added successfully.');
             console.table(results);
-            options();
+            
           }
         }
       );
@@ -173,7 +180,7 @@ function addEmployee() {
           } else {
             console.log('Employee added successfully.');
             console.table(results);
-            options();
+            
           }
         }
       );
@@ -211,7 +218,7 @@ function addEmployee() {
         db.query( 'UPDATE employee SET role_id = ? WHERE first_name = ? AND last_name = ?',[response.newrole, response.employee],function (err, results) {
           db.query('SELECT * FROM employee', function (err, results) {
             console.table(results);
-            options();  
+            options();
           });
 
       });
