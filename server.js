@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 
 
 const questions = require('./questions');
+const { up } = require('inquirer/lib/utils/readline');
 
 // Express middleware
 
@@ -57,6 +58,7 @@ inquirer.prompt(questions)
         }
         else if (response.choice === 'Update an Employee Role') {
             console.log('Updating an employee role');
+            updateEmployeeRole();
 
         }
         else if (response.choice === 'Exit') {
@@ -171,7 +173,25 @@ function addEmployee() {
 
     
   function updateEmployeeRole() {
-    
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          message: 'Which employees role would you like to update?',
+          choices:'employeeChoices',
+
+        },
+        {
+          type: 'input',
+          message: 'What is the new role',
+          choices:'roleChoices'
+        },
+
+
+      ])
+      .then((response) => {
+        
+      });
   }
     
 
