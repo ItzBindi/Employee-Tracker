@@ -21,7 +21,7 @@ const db = mysql.createConnection(
   },
   console.log(`Connected to the business database.`)
 );
-
+function options() {
 inquirer.prompt(questions)
     .then((response) => {
         console.log(response);
@@ -62,7 +62,7 @@ inquirer.prompt(questions)
 
         }
         else if (response.choice === 'Exit') {
-            console.log('Exiting');
+        process.exit();
         }
 
         
@@ -70,8 +70,8 @@ inquirer.prompt(questions)
     .catch((err) => {
         console.log(err);
     });
-
-
+  }
+options();
 function addDepartment() {
     inquirer.prompt([
         {
@@ -83,8 +83,10 @@ function addDepartment() {
     .then((response) => {
         console.log(response);
         db.query('INSERT INTO department (name) VALUES (?)',[response.departmentName], function (err, results) {
-            console.log(err);
+          db.query('SELECT * FROM department', function (err, results) {
             console.table(results);
+            options();
+          });
         });
     })
     .catch((err) => {
@@ -115,11 +117,16 @@ function addRole() {
       console.log(response);
       db.query(
         'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',[response.roleName, response.roleSalary, response.roleDepartmentID],function (err, results) {
+          db.query('SELECT * FROM role', function (err, results) {
+            console.table(results);
+            options();
+          });
           if (err) {
             console.log(err);
           } else {
             console.log('Role added successfully.');
             console.table(results);
+            options();
           }
         }
       );
@@ -157,11 +164,16 @@ function addEmployee() {
       console.log(response);
       db.query(
         'INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES (?, ?, ?, ?)',[response.employeeFirstName, response.employeeLastName, response.employeeRoleID, response.employeeManagerID,],function (err, results) {
+          db.query('SELECT * FROM employee', function (err, results) {
+            console.table(results);
+            options();  
+          });
           if (err) {
             console.log(err);
           } else {
             console.log('Employee added successfully.');
             console.table(results);
+            options();
           }
         }
       );
@@ -173,26 +185,39 @@ function addEmployee() {
 
     
   function updateEmployeeRole() {
+    let employeeChoices = [];
+    db.query('SELECT * FROM employee', function (err, results) {
+      // console.table(results);
+      employeeChoices = results.map((employee) => `${employee.first_name} ${employee.last_name}`);
+      // console.log(employeeChoices);
+
     inquirer
       .prompt([
         {
           type: 'list',
           message: 'Which employees role would you like to update?',
-          choices:'employeeChoices',
+          choices:employeeChoices,
+          name:'employee'
 
         },
         {
           type: 'input',
           message: 'What is the new role',
-          choices:'roleChoices'
-        },
-
-
+          choices:'roleChoices',
+          name:'newrole'
+        }
       ])
       .then((response) => {
-        
+        db.query( 'UPDATE employee SET role_id = ? WHERE first_name = ? AND last_name = ?',[response.newrole, response.employee],function (err, results) {
+          db.query('SELECT * FROM employee', function (err, results) {
+            console.table(results);
+            options();  
+          });
+
       });
-  }
+    });
+  });
+  };
     
 
 
